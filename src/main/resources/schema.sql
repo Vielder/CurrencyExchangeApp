@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS currency_list (
-    id INTEGER auto_increment,
-    currency VARCHAR2 PRIMARY KEY,
+    id int auto_increment,
+    currency VARCHAR2,
     name_lt VARCHAR2,
     name_EN VARCHAR2,
     curr_ID VARCHAR2,

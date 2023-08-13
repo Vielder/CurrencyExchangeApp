@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Data
@@ -13,9 +14,11 @@ import javax.persistence.Id;
 @Entity
 @Table(name = "CURRENCY_LIST")
 public class Currency {
+    @org.springframework.data.annotation.Id
     @Id
+    @GeneratedValue
     @Column
-    private int id;
+    private Integer id;
     @Column
     private String currency;
     @Column

@@ -4,78 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Currency Exchange App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .exchange-rates {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .currency-card {
-            border: 1px solid #ddd;
-            padding: 1rem;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            width: 25%;
-            text-align: center;
-            margin: 0 auto;
-        }
-        .history-chart {
-            width: 100%;
-            height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .calculator {
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .currency-dropdown {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .currency-dropdown select {
-            appearance: none;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 8px 30px 8px 10px;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 100%;
-            cursor: pointer;
-        }
-        .currency-dropdown::after {
-            content: '▼';
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            font-size: 16px;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="/js/exchange-rate-page.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <header>
@@ -85,79 +18,59 @@
     <h2>Central Bank Exchange Rates</h2>
     <div class="exchange-rates">
         <div class="currency-card">
-            <div class="currency-dropdown">
-                <select id="сurrency" name="сurrency" required>
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
-                </select>
-            </div>
-            <h3>EUR to USD</h3>
-            <p>Exchange Rate: 1.23</p>
+            <select id="currency-dropdown" name="сurrency" required>
+                <option value="iniVAlue">Choose desired currency</option>
+            </select>
+            <h3 id="exchange-rate-header"></h3>
+            <p id="exchange-rate"></p>
         </div>
     </div>
     <h2>Exchange Rate History</h2>
-    <div class="history-chart">
-        <!-- Add a chart here to display history -->
+    <div class="date-picker">
+        <label for="dateFrom">From:</label>
+        <input type="date" id="dateFrom" name="dateFrom" required min="1993-12-30">
     </div>
+    <div class="date-picker">
+        <label for="dateTo">To:</label>
+        <input type="date" id="dateTo" name="dateTo " required min="1993-12-30">
+    </div>
+    <button id="update-button">Update</button>
+    <p id="chart-error"><p>
+    <div class="history-chart">
+        <canvas id="exchange-rate-chart"></canvas>
+    </div>
+
     <h2>Currency Calculator</h2>
     <div class="calculator">
         <form>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" step="0.01" required>
-            <br>
-            <label for="fromCurrency">From Currency:</label>
-            <select id="fromCurrency" name="fromCurrency" required>
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-                <option value="GBP">GBP</option>
-                <!-- Add more currency options here -->
-            </select>
-            <br>
-            <label for="toCurrency">To Currency:</label>
-            <select id="toCurrency" name="toCurrency" required>
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-                <option value="GBP">GBP</option>
-                <!-- Add more currency options here -->
-            </select>
-            <br>
+            <div class="input-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" step="0.01" required>
+            </div>
+            <div class="input-group">
+                <label for="fromCurrency">From Currency:</label>
+                <select id="fromCurrency" name="fromCurrency" required>
+                    <option value="iniVAlue">Choose desired currency</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="toCurrency">To Currency:</label>
+                <select id="toCurrency" name="toCurrency" required>
+                    <option value="iniVAlue">Choose desired currency</option>
+                </select>
+            </div>
             <button type="submit">Calculate</button>
         </form>
-        <p>Converted Amount: $123.45</p>
-        <p>Exchange Rate: 1.23</p>
+        <div class="result">
+            <p id="convertedAmount"></p>
+            <p id="exchangeRate"></p>
+        </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tp = "EU";
-
-        // Получаем данные с API
-        fetch('exchange-rates/currencies')
-            .then(response => response.json())
-            .then(data => {
-                const currencies = data.map(currencyData => ({
-                    code: currencyData.currency,
-                    name: currencyData.nameEN // Можете использовать nameLT, если нужно имя на другом языке
-                }));
-
-                // Получаем элемент дропдауна
-                const dropdown = document.getElementById('currencyDropdown');
-
-                // Добавляем опции в дропдаун
-                currencies.forEach(currency => {
-                    const option = document.createElement('option');
-                    option.value = currency.code;
-                    option.text = currency.name;
-                    dropdown.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Ошибка при получении данных:', error);
-            });
-    });
-</script>
+<div id="app">
+    <main-app></main-app>
+</div>
 
 </body>
 </html>

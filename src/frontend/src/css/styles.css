@@ -1,0 +1,156 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.exchange-rates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.currency-card {
+    width: 25%;
+    margin: 0 auto;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+select {
+    appearance: none;
+    width: 100%;
+    font-size: 16px;
+    padding: 8px 30px 8px 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#exchange-rate-header {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+#exchange-rate {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+#chart-error {
+    color: red;
+    font-size: 16px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.calculator {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.date-picker {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.date-picker label {
+    margin-right: 10px;
+}
+
+.date-picker input {
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#update-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#update-button:hover {
+    background-color: #0056b3;
+}
+
+#exchange-rate-chart {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.calculator {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.calculator select{
+    max-width: max-content;
+}
+
+button{
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.result {
+    margin-top: 15px;
+}
+
+.result p {
+    margin-bottom: 5px;
+    font-weight: bold;
+}

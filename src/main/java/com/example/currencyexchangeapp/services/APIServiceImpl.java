@@ -2,6 +2,7 @@ package com.example.currencyexchangeapp.services;
 
 import com.example.currencyexchangeapp.models.Currency;
 import com.example.currencyexchangeapp.models.ExchangeRate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,46 +17,27 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ExchangeRatesServiceImpl implements ExchangeRatesService{
+public class APIServiceImpl implements APIService {
+    @Autowired
     private JdbcTemplate jdbcTemplate;
-    public ExchangeRatesServiceImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private DBService dbService;
 
     @Override
     public List<ExchangeRate> getFxRatesForAllCurrencies() {
         String baseUrl = "https://www.lb.lt//webservices/FxRates/FxRates.asmx/getFxRatesForCurrency";
-        String dateFrom = "1993-12-30";
-//        String dateFrom = "2023-08-08";
+        String dateFrom = "1993-12-30";  // min value in the bank API
         String dateTo = LocalDate.now().toString();
         String url = baseUrl + "?tp=&ccy=" + "&dtFrom=" + dateFrom + "&dtTo=" + dateTo;
         RestTemplate restTemplate = new RestTemplate();
         String xmlResponse = restTemplate.getForObject(url, String.class);
         List<ExchangeRate> rates = parseExchangeRatesXml(xmlResponse);
-        for (ExchangeRate rate : rates
-        ) {
-            String sql = "INSERT INTO EXCHANGE_RATES (ID, TYPE, DATE, CURRENCY1, AMOUNT1, CURRENCY2, AMOUNT2)\n" +
-                    "VALUES (" +
-                    "'"+rate.getId() +"',"+
-                    "'"+rate.getType() +"',"+
-                    "'"+rate.getDate() +"',"+
-                    "'"+rate.getCurrency1() +"',"+
-                    "'"+rate.getAmount1() +"',"+
-                    "'"+rate.getCurrency2() +"',"+
-                    "'"+rate.getAmount2() +
-                    "');";
-            jdbcTemplate.execute(sql);
-        }
-
+        Collections.reverse(rates);
         return rates;
-    }
-
-    @Override
-    public List<ExchangeRate> getFxRatesForCurrency(String type, String currency, LocalDate dateFrom, LocalDate dateTo) {
-        return null;
     }
 
     @Override
@@ -65,21 +47,7 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService{
         RestTemplate restTemplate = new RestTemplate();
         String xmlResponse = restTemplate.getForObject(url, String.class);
         List<ExchangeRate> rates = parseExchangeRatesXml(xmlResponse);
-        for (ExchangeRate rate : rates
-        ) {
-            String sql = "INSERT INTO EXCHANGE_RATES (ID, TYPE, DATE, CURRENCY1, AMOUNT1, CURRENCY2, AMOUNT2)\n" +
-                    "VALUES (" +
-                    "'"+rate.getId() +"',"+
-                    "'"+rate.getType() +"',"+
-                    "'"+rate.getDate() +"',"+
-                    "'"+rate.getCurrency1() +"',"+
-                    "'"+rate.getAmount1() +"',"+
-                    "'"+rate.getCurrency2() +"',"+
-                    "'"+rate.getAmount2() +
-                    "');";
-            jdbcTemplate.execute(sql);
-        }
-
+        Collections.reverse(rates);
         return rates;
     }
 
@@ -88,19 +56,6 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService{
         RestTemplate restTemplate = new RestTemplate();
         String xmlResponse = restTemplate.getForObject("https://www.lb.lt/webservices/FxRates/FxRates.asmx/getCurrencyList?", String.class);
         List<Currency> currencies = parseCurrencyListXml(xmlResponse);
-        for (Currency currency : currencies
-        ) {
-            String sql = "INSERT INTO CURRENCY_LIST (ID, CURRENCY, NAME_LT, NAME_EN, CURR_ID, CCY_MNR_UNTS)\n" +
-                    "VALUES (" +
-                    "'"+currency.getId() +"',"+
-                    "'"+currency.getCurrency() +"',"+
-                    "'"+currency.getNameLT() +"',"+
-                    "'"+currency.getNameEN() +"',"+
-                    "'"+currency.getCurrID() +"',"+
-                    "'"+currency.getCcyMnrUnts() +
-                    "');";
-            jdbcTemplate.execute(sql);
-        }
         return currencies;
     }
 
@@ -156,7 +111,7 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService{
                 String nameEN = CcyNtryElement.getElementsByTagName("CcyNm").item(1).getTextContent();
                 String currID = CcyNtryElement.getElementsByTagName("CcyNbr").item(0).getTextContent();
                 int ccyMnrUnts = Integer.parseInt(CcyNtryElement.getElementsByTagName("CcyMnrUnts").item(0).getTextContent());
-                Currency currency = new Currency(2 ,ccy, nameLT, nameEN, currID, ccyMnrUnts);
+                Currency currency = new Currency(i, ccy, nameLT, nameEN, currID, ccyMnrUnts);
                 currencies.add(currency);
             }
 
