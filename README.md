@@ -16,7 +16,8 @@ Use the H2 database for data storage.
 Backend: Java8+, maven
 Fronted: any UI framework
 
-#About Frontend
+
+# About Frontend
 
 There are two versions of frontend:
 - Vue.js frontend (made as a separate project);
